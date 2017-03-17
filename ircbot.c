@@ -1,15 +1,15 @@
 /*
 
-	IRCBOT.C
-	This is simple ircbot which connect to server, register connect and check if there is error in pass, user and nick messages.
-	If there is error with nick message, it will try another nickname or close the connect.
-	This bot also listen ping messages and answer with pong. It also join to x channel and if kicked, then rejoin. 
+IRCBOT.C
+This is simple ircbot which connect to server, register connect and check if there is error in pass, user and nick messages.
+If there is error with nick message, it will try another nickname or close the connect.
+This bot also listen ping messages and answer with pong. It also join to x channel and if kicked, then rejoin. 
 
-	The bot is not ready, but it is sample of my code skills. If you just google how to code ircbot, I recommend to read: 
-	http://beej.us/guide/bgnet/output/html/multipage/index.html
-	https://tools.ietf.org/html/rfc2812
+If you just google how to code ircbot, I recommend to read: 
+http://beej.us/guide/bgnet/output/html/multipage/index.html
+https://tools.ietf.org/html/rfc2812
 
-	Whit these links you can get started.	...Or just wait I completed this bot.
+Whit these links you can get started.	...Or just wait I completed this bot.
 
 
 */
