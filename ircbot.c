@@ -54,8 +54,8 @@ const char msgchannel[2][60 + 1] = { "PRIVMSG #CHANNEL1 :Hi! I am bot.\r\n","PRI
 */
 
 const char *ping = "PING :";                                                    //Code is using this for searching ping message.
-char errorcode1[2][3 + 1] = { "461", "462" };                                   //Error codes for pass message and user message
-char errorcode2[6][3 + 1] = { "431", "432", "433", "436", "437", "484" };       //Error codes for nick message
+char errorcode1[2][3 + 1] = { " 461 ", " 462 " };                                   //Error codes for pass message and user message
+char errorcode2[6][3 + 1] = { " 431 ", " 432 ", " 433 ", " 436 ", " 437 ", " 484 " };       //Error codes for nick message
 char *errorcheck;
 char *pingmessage;
 char startofnick[18 + 1] = "NICK ";
