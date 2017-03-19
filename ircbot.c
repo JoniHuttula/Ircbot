@@ -150,14 +150,15 @@ void main(void)
 
 		pingcheck();
 
-		for (i = 0; i <= 1; i++)                          //For each received messages, code check if there is any error numeric code.
+		for (i = 0; i <= 1; i++)  							//For each received messages, code check if there is any error numeric code.
+		{	
 			errorcheck = strstr(buf, errorcode1[i]);				//Code will check error codes from errorcode1 array. Return NULL if there is no error
-		if (errorcheck != NULL)									        // Check if there is error
-		{
-			printf("Error in pass or user message\n");
-			exit(0);											                //If there is error, exit.
+			if (errorcheck != NULL)								// Check if there is error
+			{
+				printf("Error in pass or user message\n");
+				exit(0);											                //If there is error, exit.
+			}
 		}
-
 
 
 		for (i = 0; i <= 5; i++)                         //For each received messages, code check if there is error in nick message
