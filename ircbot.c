@@ -189,7 +189,7 @@ void main(void)
 
 		strcat(replyirc, hostname);							           //Copy hostname to replyirc. Now replyirc is like ":hostname"
 		strcat(replyirc, numericCode);                     //Copy numericCode to replyirc. Now replyirc is like ":hostname 001"
-		printf("replyirc on %s", replyirc);
+		//printf("replyirc is %s\n", replyirc);
 		welcome = strstr(buf, replyirc);                   //Search welcome message from buf.
 		if (welcome != NULL)                               //If there is welcome message.
 		{
