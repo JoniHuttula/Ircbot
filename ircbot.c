@@ -1,17 +1,12 @@
 /*
-
 IRCBOT.C
 This is simple ircbot which connect to server, register connect and check if there is error in pass, user and nick messages.
 If there is error with nick message, it will try another nickname or close the connect.
-This bot also listen ping messages and answer with pong. It also join to x channel and if kicked, then rejoin. 
-
-If you just google how to code ircbot, I recommend to read: 
+This bot also listen ping messages and answer with pong. It also join to x channel and if kicked, then rejoin.
+If you just google how to code ircbot, I recommend to read:
 http://beej.us/guide/bgnet/output/html/multipage/index.html
 https://tools.ietf.org/html/rfc2812
-
 Whit these links you can get started.	...Or just wait I completed this bot.
-
-
 */
 
 #include <stdio.h>
@@ -32,30 +27,30 @@ int sock;
 int conn;
 int i, d, p;
 int recvmessage;
-char buf[MESSAGE_SIZE];	
+char buf[MESSAGE_SIZE];
 
 /*
-		HOX! Fill careful followed things and read comment! Them will help you to configure bot
+HOX! Fill careful followed things and read comment! Them will help you to configure bot
 */
 
-int c = 2;																//Number of channels where to join. 
-int n = 4;																//number of nicknames
-int a = 1;																//Starting number of alternative nicknames. 0 is reserved for first nickname what bot will try.
-const char port[4 + 1] = "xxxx";                           //Server's port.
-const char hostname[26 + 1] = "xxxx";                      //Server's hostname.
-const char startinginfo[2][59 + 1] = { "PASS none\r\n", "USER guest 8 * :NAME\r\n" }; // Send these messages to register connect. First password, then nick and then user message. 8 set user invisible fot other user. For register you also need nick messages. It will come later.
-const char nicknames[4][9 + 1] = { "NAME1", "NAME2", "NAME3", "NAME4" };  // Set your nickname and alternative nicknames. Remember set n value to respond the number of nicknames.
+int c = 2;							//Number of channels where to join. 
+int n = 2;							//number of nicknames
+int a = 1;							//Starting number of alternative nicknames. 0 is reserved for first nickname what bot will try.
+const char port[4 + 1] = "port";                           	//Server's port.
+const char hostname[26 + 1] = "hostname";                      //Server's hostname.
+const char startinginfo[2][59 + 1] = { "PASS none\r\n", "USER guest 8 * :name\r\n" }; // Send these messages to register connect. First password, then nick and then user message. 8 set user invisible fot other user. For register you also need nick messages. It will come later.
+const char nicknames[2][9 + 1] = { "NICK1", "NICK2" };  // Set your nickname and alternative nicknames. Remember set n value to respond the number of nicknames.
 const char channelnames[2][60 + 1] = { "#CHANNEL1", "#CHANNEL2" };					//join to channel. Use # before channel name. Remember set c to respond the number of channels.
-const char msgchannel[2][60 + 1] = { "PRIVMSG #CHANNEL1 :Hi! I am bot.\r\n","PRIVMSG #CHANNEL2 :Hi! I am bot.\r\n"};	//Message to channel. For now, you need to set this up manually. "PRIMSG #channelName : 'message' \r\n" Do not use ' ' in your message.
+const char msgchannel[2][60 + 1] = { "PRIVMSG #CHANNEL1 :Hi! I am bot.\r\n", "PRIVMSG #CHANNEL2 :Hi! I am bot.\r\n" };	//Message to channel. For now, you need to set this up manually. "PRIMSG #channelName : 'message' \r\n" Do not use ' ' in your message.
 
 
 /*
-		Configure end.
+Configure end.
 */
 
 const char *ping = "PING :";                                                    //Code is using this for searching ping message.
-char errorcode1[2][3 + 1] = { " 461 ", " 462 " };                                   //Error codes for pass message and user message
-char errorcode2[6][3 + 1] = { " 431 ", " 432 ", " 433 ", " 436 ", " 437 ", " 484 " };       //Error codes for nick message
+char errorcode1[2][5 + 1] = { " 461 ", " 462 " };                                   //Error codes for pass message and user message
+char errorcode2[6][5 + 1] = { " 431 ", " 432 ", " 433 ", " 436 ", " 437 ", " 484 " };       //Error codes for nick message
 char *errorcheck;
 char *pingmessage;
 char startofnick[18 + 1] = "NICK ";
@@ -64,6 +59,7 @@ char starofchan[6] = "JOIN :";
 char channel[74 + 1];
 char *hastag;
 char *kicked;
+char *chaname3;
 
 
 void connecting(void)                           //Take connect to server.
@@ -156,13 +152,13 @@ void main(void)
 
 		for (i = 0; i <= 1; i++)                          //For each received messages, code check if there is any error numeric code.
 			errorcheck = strstr(buf, errorcode1[i]);				//Code will check error codes from errorcode1 array. Return NULL if there is no error
-			if (errorcheck != NULL)									        // Check if there is error
-			{ 
-				printf("Error in pass or user message\n");	
-				exit(0);											                //If there is error, exit.
-			}
-
+		if (errorcheck != NULL)									        // Check if there is error
+		{
+			printf("Error in pass or user message\n");
+			exit(0);											                //If there is error, exit.
 		}
+
+
 
 		for (i = 0; i <= 5; i++)                         //For each received messages, code check if there is error in nick message
 		{
@@ -193,7 +189,7 @@ void main(void)
 
 		strcat(replyirc, hostname);							           //Copy hostname to replyirc. Now replyirc is like ":hostname"
 		strcat(replyirc, numericCode);                     //Copy numericCode to replyirc. Now replyirc is like ":hostname 001"
-
+		printf("replyirc on %s", replyirc);
 		welcome = strstr(buf, replyirc);                   //Search welcome message from buf.
 		if (welcome != NULL)                               //If there is welcome message.
 		{
@@ -209,57 +205,55 @@ void main(void)
 		}
 	}
 
+
 //After for loop, start while loop if connection is succesfull
-	while (conn == 0)
+while (conn == 0)
+{
+
+	memset(buf, 0, sizeof(buf));                                           //Set buf to zero.
+	recvmessage = recv(sock, buf, sizeof(buf) - 1, 0);						         //Receive messages. -1 is for avoid buffer overflow. It is reserve '\0' to end of th$
+	buf[recvmessage] = '\0';                                               //Set "\0" to end of the buf.
+	//printf("%s\n", buf);													                       //Print received messages.
+	if (recvmessage == -1)                                                 //If -1, there is error
 	{
+		perror("Problem with receiving message\n");
+		exit(0);
 
-		memset(buf, 0, sizeof(buf));                                           //Set buf to zero.
-		recvmessage = recv(sock, buf, sizeof(buf) - 1, 0);						         //Receive messages. -1 is for avoid buffer overflow. It is reserve '\0' to end of th$
-		buf[recvmessage] = '\0';                                               //Set "\0" to end of the buf.
-		//printf("%s\n", buf);													                       //Print received messages.
-		if (recvmessage == -1)                                                 //If -1, there is error
-		{
-			perror("Problem with receiving message\n");
-			exit(0);
+	}
+	if (recvmessage == 0)                                                   //If recv return zero connection is closed.
+	{
+		printf("connection closed\n");
+		close(sock);                                                          //Close socket
+		exit(0);
+	}
 
-		}
-		if (recvmessage == 0)                                                   //If recv return zero connection is closed.
-		{
-			printf("connection closed\n");
-			close(sock);                                                          //Close socket
-			exit(0);
-		}
-	
 
 	pingcheck();															             //This check if there is ping message
 
-	
-		kicked = strstr(buf, " KICK ");											 //Search if bot is kicked from channel
-		if (kicked != NULL)                                  // if KICK is found.
+
+	kicked = strstr(buf, " KICK ");											 //Search if bot is kicked from channel
+	if (kicked != NULL)                                  // if KICK is found.
+	{
+
+		hastag = strstr(buf, "#");											  //Search # from message. Not necessary. Name can be found from kicked message also. For historic reason, I have been let this here.
+		//printf("search channel: %s\n", hastag);			
+
+		for (i = 0; i < c; i++)
 		{
-
-			hastag = strstr(buf, "#");											  //Search # from message. Not necessary. Name can be found from kicked message also. For historic reason, I have been let this here.
-			//printf("search channel: %s\n", hastag);			
-					
-			for (i = 0; i < c; i++)
+			chaname3 = strstr(hastag, channelnames[i]);		  //Then compare chaname and used channel names
+			if (chaname3 != NULL)
 			{
-				chaname3 = strstr(hastag, channelnames[i]);		  //Then compare chaname and used channel names
-				if (chaname3 != NULL)
-				{
-					
-					memcpy(channel, starofchan, strlen(starofchan));			//Build up rejoin message
-					memcpy(channel + strlen(starofchan), channelnames[i], strlen(channelnames[i]));
-					memcpy(channel + strlen(starofchan) + strlen(channelnames[i]), endofcommand, strlen(endofcommand) + 1);
-					printf("Rejoin message is %s\n", channel);
-					send(sock, channel, strlen(channel), 0);						  // Send join message to server
-				}
-			}
 
-		
+				memcpy(channel, starofchan, strlen(starofchan));			//Build up rejoin message
+				memcpy(channel + strlen(starofchan), channelnames[i], strlen(channelnames[i]));
+				memcpy(channel + strlen(starofchan) + strlen(channelnames[i]), endofcommand, strlen(endofcommand) + 1);
+				printf("Rejoin message is %s\n", channel);
+				send(sock, channel, strlen(channel), 0);						  // Send join message to server
+			}
 		}
 
+
 	}
+
 }
-
-
-
+}
