@@ -37,7 +37,7 @@ char buf2[10000];
 const char *searchNull;
 char destBuf[10000];
 /*
-HOX! Fill careful followed things and read comment! Them will help you to configure bot
+HOX! Fill carefully followed things and read comment! Comments will help you to configure bot.
 */
 
 int c = 1;                                                                                      //Number of channels where to join.
